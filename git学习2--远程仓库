@@ -1,0 +1,60 @@
+ 远程仓库
+	创建一个github账号
+	创建一个sshKey，使用命令
+		$ssh-keygen -t rsa -C "1466877428@qq.com"  后面的邮件是自己在github关联的
+		顺利的话可以在C:\Users\Administrator\.ssh里面找到文件id_rsa和id_rsa.pub，前面是私钥，后面是公钥
+	登陆Github，打开Settings，点击 SSH Keys 打开页面，点击Add SSH Keys,填上任意title，粘贴id_rsb.pub文件的内容
+	
+	为什么github需要ssh keys？
+		因为他要识别是否是你提交的，而不是别人冒充的，当然他允许你添加多个ssh keys ，这样就可以在多个电脑上上传了，你上传的仓库如果是私有的 需要交费用，公用的免费
+		
+先有本地库，后有远程库的时候，如何关联远程库。
+	
+	添加远程库  
+			在gitHub上面添加一个空的仓库，名字learngit
+			$git remote add origin git@github.com:账号名/learngit.git    关联远程库 使用 远程仓库名 origin 默认叫法
+			$git push -u origin master	把本地的内容推送到远程库上，实际是把本地的仓库 推送的到远程库中
+			
+			由于远程库是空的，所以加了-u ,git 不但把本地的master内容推送到远程master上，还会把他们关联起来，
+			推送之后就可以在远程库中的内容和本地一样了。之后本地提交，使用
+			$git push origin master
+			
+	SSH警告
+		第一次使用git的clone或push链接github，会得到一个警告，
+		The authenticity of host 'github.com (xx.xx.xx.xx)' can't be established.
+		RSA key fingerprint is xx.xx.xx.xx.xx.
+		Are you sure you want to continue connecting (yes/no)?
+
+		这是因为Git使用SSH连接，而SSH连接在第一次验证GitHub服务器的Key时，需要你确认GitHub的Key的指纹信息是否真的来自GitHub的服务器，输入yes回车即可。
+		Git会输出一个警告，告诉你已经把GitHub的Key添加到本机的一个信任列表里了：
+		Warning: Permanently added 'github.com' (RSA) to the list of known hosts.
+		这个警告只会出现一次，后面的操作就不会有任何警告了。
+		如果你实在担心有人冒充GitHub服务器，输入yes前可以对照GitHub的RSA Key的指纹信息是否与SSH连接给出的一致。
+		
+		小结
+			要关联一个远程库，使用命令git remote add origin git@server-name:path/repo-name.git；
+
+			关联后，使用命令git push -u origin master第一次推送master分支的所有内容；
+
+			此后，每次本地提交后，只要有必要，就可以使用命令git push origin master推送最新修改；
+
+			分布式版本系统的最大好处之一是在本地工作完全不需要考虑远程库的存在，也就是有没有联网都可以正常工作，
+			而SVN在没有联网的时候是拒绝干活的！当有网络的时候，再把本地提交推送一下就完成了同步，真是太方便了！
+	
+从远程库克隆到本地
+	添加远程库  
+			在gitHub上面添加一个空的仓库，名字gitskills
+			使用 $git clone git@github.com:账号/gitskills 
+			完成，使用如下命令查看
+			$git gitskills
+			$git ls			
+			
+			git支持多种协议，https，ssh等，但是https比较慢，使用ssh支持原生git协议速度最快
+			
+			
+			
+
+			
+			
+			
+			
