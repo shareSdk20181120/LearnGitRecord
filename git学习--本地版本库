@@ -1,0 +1,127 @@
+https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0013743862006503a1c5bf5a783434581661a3cc2084efa000
+
+1、安装完成后，还需要最后一步设置，在命令行输入：
+	$ git config --global user.name "Your Name"
+	$ git config --global user.email "email@example.com"
+	因为Git是分布式版本控制系统，所以，每个机器都必须自报家门：你的名字和Email地址。你也许会担心，如果有人故意冒充别人怎么办？这个不必担心，
+		首先我们相信大家都是善良无知的群众，
+		其次，真的有冒充的也是有办法可查的。
+创建版本库
+		1、
+		$ mkdir learngit  --创建一个文件夹 名为learngit
+		$ cd learngit		
+		$ pwd	用于显示当前目录
+			/learngit
+		2、$ git init	用于把这个目录变成git可以管理的仓库，你可以看到这个目录新生成了一个文件夹.git，如果看不到，使用ls -ah命令就可以看到了
+			Initialized empty Git repository in D:MyApplication/Git/learngit/.git/
+
+把文件添加到版本库
+
+		所有的版本控制系统，只跟踪文件的改动，比如txt,网页，代码等，版本控制可以告诉你每次的改动，比如在第五行添加了啥，减少了啥。
+	而图片，视频这些二进制文件是没法跟踪文件的变化的，只能把二进制文件每次改动串联起来，也就是只知道文件从100KB变成120KB，
+	但到底改了啥，版本控制无法知道	
+	不幸的是，microsoft的word格式是二进制格式，因此 要用纯文本方式编写文件
+	因文本是有编码的，比如中文常用GBK编码，日文有Shift_JIS编码，如没有历史遗留问题，建议使用标准的UTF-8编码，所有语言用同一种编码，既没有冲突，又被所有平台所支持。
+	
+	使用Microsoft要注意
+		不要用其自带的记事本编辑任何文件，因为他们通用在每个文件添加十六进制的字符来保存UTF-8格式编码，建议使用Notepad++代替记事本，修改编码格式为UTF-8 without BOM
+	
+	在learngit文件下创建一个readme.txt文件，并输入两行内容
+	git is a  version controll system
+	git is free software.
+	把一个文件放到git仓库只需要两步：
+	
+	1、 $ git add readme.txt  可反复多次使用，例如git add readme.txt file1.txt
+		执行该命令 不会有任何消息，就说明添加成功了
+	
+	2、	$ git commit -m "write a readme.txt file"
+		解释git commit 命令 ,-m后面输入的是本次提交的说明	。执行该命令成功后，告诉你 1 file change：1个文件改的；2 insertions:插入两行内容
+	
+	为什么git添加文件要add,commit两步呢？ 
+		因为commit可以一次提交多个文件，所有你可以多次add不同文件。比如
+		git add readme.txt 
+		git add file1.txt file2.txt
+		git commit -m "add 3 files"
+		
+修改文本内容，再次提交
+			将readme.txt的第一行改为git is a distributed version controll system
+			$git status   查看当前的库的状态，
+			$git diff	查看修改的哪些内容
+			确定了哪些修改的内容，提交修改内容的步骤和提交新文件是一样的，
+			$git add readme.txt 在没有执行commit之前，执行一下 $git status  --告诉我们将要被提交的内容包括readme.txt,			
+			$git commit -m "add distributed"  提交成功
+			再次执行 $git status 可以看到，提示当前没有需要提交的修改，工作目录是干净的
+
+版本回退
+		将readme.txt的第二行改为 git is free software distributed under the GPL;
+		
+		$git add readme.txt
+		$git commit -m "append GPL" 
+		
+		就这样不断的修改 不断的提交、、、、
+		突然想回到之前提交的某个节点上，怎么办？
+		$git log  查看之前提交的记录
+		
+		如果感觉信息太多，可以使用
+		$git log --pretty=oneline  
+		
+		输出的信息中，前面的十六进制，表示提交的版本号
+		在git中，用HEAD表示当前版本，上一个版本HEAD^,上上一个版本HEAD^^,以此类推，现在我们将版本回到上一个版本使用如下命令
+		$git reset --hard HEAD^
+		这时可以看看readme.txt 是否已经改变到了上一个版本
+		
+		使用git log 查看一下版本库的当前状态，最新提交记录的那个已经看不到了，怎么办？
+		如果还没有关闭命令窗口的情况下，可以使用如下命令，但是要记录版本号，
+		$git reset --hard 1c16fc
+		版本号只要前面几个数字就可以啦 ，不需要完整的
+		
+		
+		git 版本的回退速度非常高，因为git有一个指向当前版本的指针HEAD，
+		
+		现在我们回退到某个版本，第二天打开命令窗口，要回到最后的版本，怎么办呢？
+		可以使用如下：
+		$git reflog
+		
+	小结：
+		HEAD代表当前版本，各个 版本之间切换，使用命令：		$git reset --hard commit_id
+		穿梭前，使用git log 查看提交历史，以便确定切换到那个版本
+		重返未来，使用git reflog 查看提交历史记录
+		
+工作区和暂存区
+		为什么git比其他版本系统设计的优秀呢，因为git跟踪并管理的是修改，而不是文件
+		
+		工作区  比如learngit文件夹就是一个工作区
+		版本库  工作区里有一个.git，这个不是工作区，是一个git版本库
+				版本库里有很多东西，最重要的是stage（暂存区），第一个分支master，以及执行master的一个指针HEAD
+		
+		git add 命令实际上是将要提交的内容放到暂存区
+		git commit 命令是将暂存区的内容放到分支上
+		
+管理修改
+		在readme.txt文件新加入一行：git has a tracks changes; 执行命令：
+		$git add readme.txt
+		在readme.txt文件修改最后一行：git has a tracks changes of file;
+		$git commit -m "tracks changes"
+		$git status  
+		可以看到中间修改的没有提交，提交的只是暂存区的内容
+		可以在执行一次
+		$git add readme.txt
+		$git commit -m "add second modified"
+		这样就提交完了
+		
+撤销修改
+	场景1 在工作区修改了内容，想直接丢弃工作区的修改是，使用 $git checkout -- file  注意这个命令中的--很重要，没有-- 就变成切换到另外一个分支了
+	场景2 在工作区修改了内容，并提交到暂存区，想撤销修改，使用命令分两步，第一步 $git reset HEAD <file> 第二步 $git checkout -- file
+	场景3 已经提交到版本库，迪士尼还还没有推送到远程库，想撤销本次提交，使用版本回退命令 $git reset HEAD^
+	
+删除文件
+		在工作区直接手误删除文件LICENSE.txt ,可以使用$git checkout -- LICENSE.txt
+		删除工作区文件，并将版本库中的该文件也删除。  第一步 使用命令git rm LICENSE.txt 第二部 $git commit -m "remove LICENSE.txt" 
+		
+		
+		
+		
+		
+		
+		
+			
