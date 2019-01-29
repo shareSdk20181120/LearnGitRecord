@@ -1,0 +1,141 @@
+创建、合并、删除分支
+	
+	创建
+		$git checkout -b dev  
+		这是创建并切换分支，这一步操作相当于：
+			$git branch dev    创建分支
+			$git checkout dev	切换分支
+		查看所有分支，使用如下命令
+		$git branch
+		注意，*代表当前分支
+	合并
+		在readme.md中添加一句"test branch ",并保存。提交这次修改到分支dev中，使用如下命令：
+		$git add README.md
+		$git commit -m "add branch test"
+		
+		切换到master分支上看，使用
+		$git checkout master
+		再次打开README.md，发现里面没有他里面内容并没有改变，这是因为我们还没有提交到改分支上。如何合并呢？使用如下：
+		$git merge dev   合并某分支到当前分支中
+		
+	删除分支
+		$git branch -d dev  这就删除分支dev
+		
+解决冲突
+	创建分支 修改README
+		$git checkout -b feature
+		修改README.md 中的最后一行内容，
+		$git add README.md
+		$git commit -m "add on feature"
+		切换主分支，修改README.md
+		$git checkout master
+		修改README.md 中的最后一行内容，一定要和上面的修改的内容不一样
+		$git add README.md
+		$git commit -m "add on master"
+		$git merge feature
+		这时候出现冲突提示，打开README.md,会看到Git用<<<<<<<，=======，>>>>>>>标记出不同分支的内容，我们修改如下后保存，再次提交
+		$git add README.md
+		$git commit -m "add on feature"
+	删除分支	
+		$git branch -d feature
+			
+			
+分支管理策略
+		在实际开发中，我们应该按照几个基本原则进行分支管理
+			1、master是主分支，是比较稳定了，仅用于发布新版本，
+			2、dev分支是不稳定的，到发布版本时，将dev版本合并到master上，
+			3、开发人员都在各自的分支干活，时不时的往dev分支上合并就行了。
+			
+		合并分支时，使用Fast forward模式，删除分支后，会丢失分支信息。
+		但使用--on-ff参数，可以禁用Faset forward模式，git会在merge时生成一个新的commit，这个就是普通合并模式，合并后有历史分支信息
+		
+		
+		实战：
+		$git checkout -b dev
+		修改README.md
+		$git add README.md
+		$git commit -m "add on dev branch"
+		$git checkout master
+		$git merge --on-ff -m "merge with on-ff" dev
+		
+		因为这次合并要创建一个新的commit，所以加上-m参数，把commit描述写进入
+			
+			
+bug分支
+		当我们在dev分支上正在做某个功能，没做完，这是我们做的部分功能还不能提交到master分支上，，突然让修改个bug。我们可以将当前的工作现场保存一下，使用如下：
+		$git stash 
+		如果在master分支上修改bug，切换到master分支，在这个master分支上在创建一个新的分支bug101，使用命令：
+		$git checkout master
+		$git checkout -b bug101
+		这时就可以修改bug，修改完成，提交到bug101分支上，使用如下命令
+		$git add <filename>
+		$git commit -m "fix bug101"
+		切换到master分支上，并合并到该分支上
+		$git checkout master
+		$git merge --no-ff -m "fix bug101" bug101
+		删除分支bug101,恢复原来的工作现场，使用如下命令
+		$git checkout -d bug101
+		$git stash list 查看保存工作现场的列表
+		$git stash pop 恢复工作现场 
+		
+		
+		恢复工作 现场有两种方法：
+			1、使用$git stash apply 这个恢复方式并不会删除stash内容，需要用$git stash drop来删除
+			2、使用$git stash pop 恢复的同时，把stash也删除了
+			
+强行删除未合并的分支
+		开发一个新功能时，最好都新建一个分支feature，在上面开发，开发完毕，合并到dev分支上
+		新建一个分支feature
+		$git checkout -b feature
+		修改内容，提交到feature分支上
+		$git add <filename>
+		$git commit -m "add feature"
+		切换到dev分支，合并
+		$git checkout dev
+		这是，接到上级命令 要将这个功能取消，如果要永久删除该功能，使用如下		$git checkout -d feature  会出现取消失败，因为这个分支还没有合并到dev分支上，如果要强行
+		删除，使用大写的-D参数，命令如下
+		$git branch -D feature
+    小结：
+		如果要丢弃一个没有被合并过的分支，可以通过$git checkout -D <name> 强行删除
+		
+多人协作
+			
+		多人协作的工作模式通常是这样：
+
+			首先，可以试图用git push origin <branch-name>推送自己的修改；
+
+			如果推送失败，则因为远程分支比你的本地更新，需要先用git pull试图合并；
+
+			如果合并有冲突，则解决冲突，并在本地提交；
+
+			没有冲突或者解决掉冲突后，再用git push origin <branch-name>推送就能成功！
+
+			如果git pull提示no tracking information，则说明本地分支和远程分支的链接关系没有创建，用命令git branch --set-upstream-to <branch-name> origin/<branch-name>。
+
+			这就是多人协作的工作模式，一旦熟悉了，就非常简单。
+
+		小结
+			查看远程库信息，使用git remote -v；
+
+			本地新建的分支如果不推送到远程，对其他人就是不可见的；
+
+			从本地推送分支，使用git push origin branch-name，如果推送失败，先用git pull抓取远程的新提交；
+
+			在本地创建和远程分支对应的分支，使用git checkout -b branch-name origin/branch-name，本地和远程分支的名称最好一致；
+			注意远程分支必须是已经创建好的，本地分支是			通过这个命令创建的
+
+			建立本地分支和远程分支的关联，使用git branch --set-upstream branch-name origin/branch-name；
+
+			从远程抓取分支，使用git pull，如果有冲突，要先处理冲突。
+			
+Rebase
+	在多人写作时，很容易出现冲突，即使没有冲突，后push 的工作人员，也必须先pull，再和并，再push
+	之前我们查看提交历史记录，会看到 不是一条直线，如何让它看起来是一条直线呢？
+	$git rebase
+	$git log	查看效果
+	小结
+		rebase操作可以把本地未push的分叉提交历史整理成直线；
+
+		rebase的目的是使得我们在查看历史提交的变化时更容易，因为分叉的提交需要三方对比。
+	
+						
