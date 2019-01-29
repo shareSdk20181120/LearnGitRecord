@@ -1,0 +1,36 @@
+标签管理
+	发布一个版本时，我们通常在版本库中 打一个标签，这样就确定了 打包版本版的时间点，之后想要取改版本，使用标签就可以了。它实际上指向的就是某个commit的指针。
+	为什么不用commit id，而用标签？
+		因为id太长了 不方便记忆，也不好找
+创建标签
+	切换到需要打标签的分支
+	$git branch
+	$git tag v1.0  创建一个标签v1.0
+	$git tag 查看所有标签
+	默认标签是打在最新提交的commit上，如果忘了打标签，想在几天前的提交节点上打标签，可以使用如下
+	$git log --pretty=oneline --abbrev-commit
+	
+	$git tag v0.9 commitid
+	$git tag  查看所有标签
+	注意标签不是按照时间顺序排列的，而是按字母的，可以使用如下查看标签的信息
+	$git show v1.0
+	
+	创建一个带说明的标签，使用-a 指定标签名，-m指定说明文字
+	$git tag -a v1.1 -m "verson 0.1 "
+操作标签
+	添加标签
+	$git tag v1
+	删除本地标签
+	$git tag -d v1.0
+	删除远程标签
+	$git push origin :refs/tags/v1.0
+	推送某个标签到远程
+	$git push origin v1.0
+	推送所有标签到远程
+	$git push origin --tags
+	
+	删除关联的远程库
+	$git remote rm origin
+	添加关联的远程库
+	$git remote add origin git@github.com:shareSdk20181120/gitskills.git
+	
