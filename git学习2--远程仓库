@@ -10,7 +10,7 @@
 		
 先有本地库，后有远程库的时候，如何关联远程库。
 	
-	添加远程库  
+	添加远程库  注意新建一个库时，一定不要初始化一个ReadMe.txt,否则你进行下面操作时，会提示你先pull
 			在gitHub上面添加一个空的仓库，名字learngit
 			$git remote add origin git@github.com:账号名/learngit.git    关联远程库 使用 远程仓库名 origin 默认叫法
 			$git push -u origin master	把本地的内容推送到远程库上，实际是把本地的仓库 推送的到远程库中
